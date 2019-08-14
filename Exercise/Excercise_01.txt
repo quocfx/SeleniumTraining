@@ -1,0 +1,8 @@
+Step 01: Start with the URL: https://itzone.com.vn/vi/
+Step 02: Click on 'IT JOBS' link on the top to go itjobs site
+Step 03: Click on 'English' link/icon to switch site language to English
+Step 04: Input 'Selenium' on search text, select 'Experienced' on 'level' drop down, 'Ho Chi Minh' on 'city' drop down. Then, click on 'Search' button
+Step 05: Verify the search result
+Hint: Pick some of search result items to verify following criteria:
+- For the keyword, 'Selenium' should exist on job tile or skill section
+- We have icon for level and location with their information.
