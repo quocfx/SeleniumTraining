@@ -24,9 +24,12 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import seleniumtraining.pages.ITJobHomePage;
+import seleniumtraining.pages.ITZoneHomePage;
+
 public class ITZoneRemoteTest {
 	private WebDriver driver;
-	private String testMode = "remote";
+	private String testMode = "localhost";
 	private String browserType = "chrome";
 	private String startURL = "https://itzone.com.vn/vi/";
 	private String remoteURL = "http://10.4.1.38:4444/wd/hub";
@@ -70,7 +73,7 @@ public class ITZoneRemoteTest {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void testOpen() throws InterruptedException {
 //		System.setProperty("webdriver.chrome.driver",
 //				"./src/test/resources/driver/chromedriver.exe");
@@ -82,21 +85,17 @@ public class ITZoneRemoteTest {
 		Thread.sleep(5000);
 		
 		System.out.println("Step 02: Click on 'IT JOBS' link on the top to go itjobs site");
-		WebElement itJobsLink = driver.findElement(By.linkText("IT JOBS"));
-		itJobsLink.click();
-		Thread.sleep(5000);
+		ITZoneHomePage itzoneHomePage = new ITZoneHomePage(driver);
+		itzoneHomePage.gotoITJobsPage();
 		
 		System.out.println("Step 03: Click on 'English' link/icon to switch site language to English");
-		WebElement enIcon = driver.findElement(By.xpath("//a[@href=\"/en\"]"));
+		ITJobHomePage itjobHomePage = new ITJobHomePage(driver);
+		itjobHomePage.switchENLanguage();		
 		
 		System.out.println("Step 04: Input 'Selenium' on search text, select 'Experienced' on 'level' drop down, 'Ho Chi Minh' on 'city' drop down."
-				+ " Then, click on 'Search' button");
-		enIcon.click();
+				+ " Then, click on 'Search' button");		
 //		Input 'Selenium' on search text
-		WebElement searchText = driver.findElement(By.cssSelector(".form-control.searchJobKeyword"));
-		searchText.click();
-		searchText.sendKeys("Selenium");
-		Thread.sleep(3000);
+		itjobHomePage.inputSearchText("Selenium");
 		
 //		Select 'Experienced' on 'level' drop down
 		WebElement levelDropdown = driver.findElement(By.id("FunctionalLevelKey"));
@@ -138,6 +137,64 @@ public class ITZoneRemoteTest {
 //		Verify the location
 		WebElement locationIconElement = searchResult.findElement(By.xpath("//i[@class='fa fa-map-marker icon-style']"));
 		WebElement locationValueElement = locationIconElement.findElement(By.xpath(".././/span"));
+		String locationValue = locationValueElement.getAttribute("innerHTML");
+		System.out.println(locationValue);
+		boolean isLocationContainKeyword = locationValue.indexOf("Ho Chi Minh") >= 0;
+		assertTrue(isLocationContainKeyword, "Location does not contain keyword 'Ho Chi Minh', actual value is: " + locationValue);
+	}
+	
+	@Test
+	public void testPageOjbectModel() throws InterruptedException {
+		System.out.println("Step 01: Start with the URL: https://itzone.com.vn/vi/");
+		driver.get(startURL);
+		Thread.sleep(5000);
+		
+		System.out.println("Step 02: Click on 'IT JOBS' link on the top to go itjobs site");
+		ITZoneHomePage itZoneHomePage = new ITZoneHomePage(driver);
+		itZoneHomePage.gotoITJobsPage();
+		
+		System.out.println("Step 03: Click on 'English' link/icon to switch site language to English");
+		ITJobHomePage itJobHomePage = new ITJobHomePage(driver);
+		itJobHomePage.switchENLanguage();
+		
+		System.out.println("Step 04: Input 'Selenium' on search text, select 'Experienced' on 'level' drop down, 'Ho Chi Minh' on 'city' drop down."
+				+ " Then, click on 'Search' button");
+		
+//		Input 'Selenium' on search text
+		itJobHomePage.inputSearchText("Selenium");
+		
+//		Select 'Experienced' on 'level' drop down
+		itJobHomePage.selectLevelDropDown("Experienced");
+		
+//		Select 'Ho Chi Minh' on 'city' drop down.
+		itJobHomePage.selectCitySelect("Ho Chi Minh");
+		
+//		Click on 'Search' button"
+		itJobHomePage.clickSearchButton();
+		
+		System.out.println("Step 05: Verify the search result");
+		List<WebElement> searchList = itJobHomePage.getSearchResults();
+		assertTrue(searchList.size() > 0, "Search has no result");
+		
+//		Verify the first result
+		WebElement searchResult = searchList.get(0);
+//		Check to see if job title contains 'Selenium' keyword?
+		WebElement titleElement = itJobHomePage.getTitleElementOnSearchResult(searchResult);
+		boolean isTitleContainsKeyword = titleElement.getAttribute("innerHTML").indexOf("Selenium") >= 0;
+		
+//		Check to see if skills section contains 'Selenium' keyword?
+		WebElement skillElement = itJobHomePage.getSkillElementOnSearchResult(searchResult);
+		String skillInnerHTML = skillElement.getAttribute("innerHTML");
+		boolean isSkillContainsKeyword = skillInnerHTML.indexOf("Selenium") >= 0;
+		assertTrue(isSkillContainsKeyword || isTitleContainsKeyword, "Title or Skill section does not have 'Selenium' keyword");
+		
+//		Verify the search level
+		WebElement levelValueElement = itJobHomePage.getLevelElementOnSearchResult(searchResult);
+		String levelValue = levelValueElement.getAttribute("innerHTML");
+		assertEquals(levelValue, "Experienced (Non-Manager)", "Level search does not match with level criteria");
+		
+//		Verify the location
+		WebElement locationValueElement = itJobHomePage.getLocationElementOnSearchResult(searchResult);
 		String locationValue = locationValueElement.getAttribute("innerHTML");
 		System.out.println(locationValue);
 		boolean isLocationContainKeyword = locationValue.indexOf("Ho Chi Minh") >= 0;
