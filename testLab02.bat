@@ -1,0 +1,1 @@
+mvn -Dtest=Lab02Test clean test

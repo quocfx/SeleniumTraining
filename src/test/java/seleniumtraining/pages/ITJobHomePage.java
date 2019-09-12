@@ -5,10 +5,13 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ITJobHomePage {
 	WebDriver driver;
+	WebDriverWait wait;
 	
 	WebElement enIcon;
 	
@@ -19,6 +22,7 @@ public class ITJobHomePage {
 	
 	public ITJobHomePage(WebDriver driver) {
 		this.driver = driver;
+		this.wait = new WebDriverWait(driver, 20);
 		initControls();
 	}
 	
@@ -35,7 +39,7 @@ public class ITJobHomePage {
 			getEnIcon();
 		}
 		enIcon.click();
-		Thread.sleep(3000);
+//		Thread.sleep(3000);
 	}
 
 	/**
@@ -83,7 +87,8 @@ public class ITJobHomePage {
 	 */
 	public WebElement getSearchBtn() {
 		if (searchBtn == null) {
-			searchBtn = driver.findElement(By.xpath("//button[contains(text(),'Search')]"));
+			searchBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(),'Search')]"))); 			
+//			searchBtn = driver.findElement(By.xpath("//button[contains(text(),'Search')]"));
 		}
 		return searchBtn;
 	}
@@ -93,7 +98,7 @@ public class ITJobHomePage {
 			getSearchText();
 		}
 		searchText.sendKeys(text);
-		Thread.sleep(3000);
+//		Thread.sleep(3000);
 	}
 	
 	public void selectLevelDropDown(String value) throws InterruptedException {
@@ -101,7 +106,7 @@ public class ITJobHomePage {
 			getLevelDropdown();
 		}
 		levelDropdown.sendKeys(value);
-		Thread.sleep(3000);
+//		Thread.sleep(3000);
 	}
 	
 	public void selectCitySelect(String value) throws InterruptedException {
@@ -109,7 +114,7 @@ public class ITJobHomePage {
 			getCitySelect();
 		}
 		citySelect.selectByVisibleText(value);
-		Thread.sleep(3000);
+//		Thread.sleep(3000);
 	}
 	
 	public void clickSearchButton() throws InterruptedException {
@@ -117,7 +122,7 @@ public class ITJobHomePage {
 			getSearchBtn();
 		}
 		searchBtn.click();
-		Thread.sleep(3000);
+//		Thread.sleep(3000);
 	}
 	
 	public List<WebElement> getSearchResults() {
